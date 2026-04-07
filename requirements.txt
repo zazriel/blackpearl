@@ -1,2 +1,2 @@
 pubnub
-modern-tkinter
+moderntkinter

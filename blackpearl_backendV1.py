@@ -2,7 +2,9 @@ from pubnub.pnconfiguration import PNConfiguration
 from pubnub.pubnub import PubNub
 from pubnub.callbacks import SubscribeCallback
 import key
+import random 
 
+print(random.random())
 pnconfig = PNConfiguration()
 pnconfig.publish_key = key.publish
 pnconfig.subscribe_key = key.subscribe
