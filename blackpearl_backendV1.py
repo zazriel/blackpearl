@@ -2,7 +2,7 @@ from pubnub.pnconfiguration import PNConfiguration
 from pubnub.pubnub import PubNub
 from pubnub.callbacks import SubscribeCallback
 import key
-
+from blackpearl_frontend import authorized_uuid
 from pubnub.models.consumer.v3.channel import Channel
 from pubnub.models.consumer.v3.group import Group
 from pubnub.models.consumer.v3.uuid import UUID
@@ -10,8 +10,7 @@ from SSOP import *
 
 active_users = {}
 usr=[]
-authorized_uuid = input("Enter the username/uuid to authorize this token for: ")
-usr.append(authorized_uuid)
+
 
 channels = [
     Channel.id("channel-a").read(),
@@ -27,6 +26,14 @@ uuids = [
     UUID.id("uuid-c").get(),
     UUID.id("uuid-d").get().update()
 ]
+pnconfig = PNConfiguration()
+pnconfig.publish_key = key.publish
+pnconfig.subscribe_key = key.subscribe
+
+pnconfig.uuid = authorized_uuid.strip()
+
+pubnub = PubNub(pnconfig)
+
 envelope = pubnub.grant_token() \
     .authorized_uuid(authorized_uuid) \
     .channels(channels) \
@@ -36,16 +43,7 @@ envelope = pubnub.grant_token() \
     .sync()
 
 token = envelope.result.token
-
-pnconfig = PNConfiguration()
-pnconfig.publish_key = key.publish
-pnconfig.subscribe_key = key.subscribe
-
-pnconfig.uuid = authorized_uuid.strip()
-
 token_str = token.strip()
-
-pubnub = PubNub(pnconfig)
 
 pubnub.set_token(token_str)
 
@@ -63,13 +61,13 @@ class MySubscribeCallback(SubscribeCallback):
         print(f"[PRESENCE] {presence.uuid} -> {presence.event}")
         user = presence.uuid
 
-    if presence.event == "join":
-        active_users[user] = "online"
+        if presence.event == "join":
+            active_users[user] = "online"
 
-    elif presence.event in ["leave", "timeout"]:
-        active_users[user] = "offline"
+        elif presence.event in ["leave", "timeout"]:
+            active_users[user] = "offline"
 
-    print("[ACTIVE USERS]", active_users)
+        print("[ACTIVE USERS]", active_users)
 
 pubnub.add_listener(MySubscribeCallback())
 pubnub.subscribe().channels(CHANNEL).with_presence().execute()
@@ -81,10 +79,11 @@ while True:
         msg = input("> ")
         pubnub.publish().channel(CHANNEL).message({         
             "user": pnconfig.user_id,      
-            "text": msg
+            "text": msg,
             "type": "status",
             "user": pnconfig.user_id,
             "status": "online"
         }).sync()
+       
     except Exception as e:
         print("Error:", e)
