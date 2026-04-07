@@ -59,6 +59,18 @@ class MySubscribeCallback(SubscribeCallback):
     def status(self, pubnub, status):
         print("STATUS:", status.category)
 
+    def presence(self, pubnub, presence):
+        print(f"[PRESENCE] {presence.uuid} -> {presence.event}")
+        user = presence.uuid
+
+    if presence.event == "join":
+        active_users[user] = "online"
+
+    elif presence.event in ["leave", "timeout"]:
+        active_users[user] = "offline"
+
+    print("[ACTIVE USERS]", active_users)
+
 pubnub.add_listener(MySubscribeCallback())
 pubnub.subscribe().channels(CHANNEL).with_presence().execute()
 
@@ -67,9 +79,12 @@ print("✅ Connected! Start chatting:\n")
 while True:
     try:
         msg = input("> ")
-        pubnub.publish().channel(CHANNEL).message({
+        pubnub.publish().channel(CHANNEL).message({         
             "user": pnconfig.user_id,      
             "text": msg
+            "type": "status",
+            "user": pnconfig.user_id,
+            "status": "online"
         }).sync()
     except Exception as e:
         print("Error:", e)

@@ -25,5 +25,11 @@ usr_frame.pack(padx=10, pady=(5, 5), side="top", anchor="n")
 input_frame = ctk.CTkFrame(master=tabview.tab("Chat room"), width=1672, height=50, fg_color="#383838", corner_radius=10)
 input_frame.pack(padx=10, pady=(0, 10), side="bottom", anchor="s")
 
-
+def user_initialize():
+    ctk.CTkLabel(master=chat_frame, text="Username", font=("Segoe UI", 24, 'bold')).pack(pady=10)
+    ctk.CTkEntry(master=chat_frame, width=300, font=("Segoe UI", 20)).pack(pady=10)
+    
+    
+user_initialize()
+    
 window.mainloop()
