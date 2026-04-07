@@ -2,9 +2,11 @@ from pubnub.models.consumer.v3.channel import Channel
 from pubnub.models.consumer.v3.group import Group
 from pubnub.models.consumer.v3.uuid import UUID
 from SSOP import *
-
+usr = []
 authorized_uuid = input("Enter the username/uuid to authorize this token for: ")
-
+usr.append(authorized_uuid)
+print(usr)
+print(authorized_uuid)
 
 channels = [
     Channel.id("channel-a").read(),
@@ -30,11 +32,5 @@ envelope = pubnub.grant_token() \
 
 token = envelope.result.token
 
-print("\n" + "="*50)
-print("✅ TOKEN SUCCESSFULLY GENERATED")
-print("="*50)
+
 print(token)
-print("="*50)
-print(f"✅ Use username: {authorized_uuid}")
-print("   (Copy the entire token above and paste it when the client asks)")
-print("   Token expires in 15 minutes - regenerate if needed")
