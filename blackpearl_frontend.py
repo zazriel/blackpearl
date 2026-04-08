@@ -87,7 +87,7 @@ def user_initialize():
     )
     submit_btn.pack(pady=10)
     
-    #cvv
+    #cvvv
 user_initialize()
     
 window.mainloop()
