@@ -76,8 +76,8 @@ def messaging():
       usrlabel = ctk.CTkLabel(
         master=msg_frame,
         text=f"{usr} (You) {datetime.datetime.now().strftime('%H:%M:%S')}:",
-        font=custom_font,
-        fg_color="transparent",
+        font=("Segoe UI", 16, 'bold'),
+        fg_color="gray",
         corner_radius=10,
         text_color= usrcolor[current_username]
     )            
@@ -125,8 +125,8 @@ def accept_messages():
            sndrlabel = ctk.CTkLabel(
               master=msg_frame,
               text=f"{sndr} (You) {datetime.datetime.now().strftime('%H:%M:%S')}:",
-              font=custom_font,
-              fg_color="transparent",
+              font=("Segoe UI", 16, 'bold'),
+              fg_color="gray",
               corner_radius=10,
               text_color= usrcolor[sndr])
            
