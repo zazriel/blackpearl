@@ -15,7 +15,7 @@ import hashlib
 active_users = {}
 msg_queue = Queue()
 CHANNEL = "blackpearl"
-usrcolor = {"zaz":"#0ec95f"}
+usrcolor = {}
 pnconfig = None
 pubnub = None
 current_username = None
