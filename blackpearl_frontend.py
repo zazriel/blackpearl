@@ -143,7 +143,7 @@ def accept_messages():
            chat_frame._parent_canvas.yview_moveto(1.0)        
         window.after(100, accept_messages)
     
-#def user_initialize():
+
 def user_initialize():
     global authorized_uuid, send_icon
 
