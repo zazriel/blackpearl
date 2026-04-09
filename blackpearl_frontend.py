@@ -72,6 +72,7 @@ def messaging():
       msgeee = msg_queue.get()
       msgs= msgeee.get('text', '')
       usr = msgeee.get('user', 'Unknown')
+      assignusercolour(usr)
       usrlabel = ctk.CTkLabel(
         master=msg_frame,
         text=f"{usr} (You) {datetime.datetime.now().strftime('%H:%M:%S')}:",
@@ -120,6 +121,7 @@ def accept_messages():
            msg = msg_queue.get()
            messg = msg.get('text', '')
            sndr = msg.get('user', 'Unknown')
+           assignusercolour(sndr)
            sndrlabel = ctk.CTkLabel(
               master=msg_frame,
               text=f"{sndr} (You) {datetime.datetime.now().strftime('%H:%M:%S')}:",
@@ -171,7 +173,7 @@ def user_initialize():
     def submit_user():
         global current_username
         current_username = authorized_uuid.get()
-        assignusercolour(current_username)
+        
         if current_username in usr:
             error_label = ctk.CTkLabel(
                 master=chat_frame,
