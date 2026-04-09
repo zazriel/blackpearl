@@ -69,9 +69,12 @@ def messaging():
       global messageentry,chat_text
       
       send_message(msgs) 
+      msgeee = msg_queue.get()
+      msgs= msgeee.get('text', '')
+      usr = msgeee.get('user', 'Unknown')
       usrlabel = ctk.CTkLabel(
         master=msg_frame,
-        text=f"{current_username} (You) {datetime.datetime.now().strftime('%H:%M:%S')}:",
+        text=f"{usr} (You) {datetime.datetime.now().strftime('%H:%M:%S')}:",
         font=custom_font,
         fg_color="transparent",
         corner_radius=10,
