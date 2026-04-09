@@ -80,14 +80,14 @@ def messaging():
         fg_color="gray",
         corner_radius=10,
         text_color= usrcolor[current_username]
-    )            
+     )            
       chat_text = ctk.CTkLabel(
         msg_frame,
         text = f"{msgs}",
         wraplength=250,
         corner_radius=10,
         fg_color= "gray"
-    )
+     )
       usrlabel.pack( anchor="w", padx=10)
       chat_text.pack( anchor="w", padx=10)
       chat_frame.update_idletasks()
@@ -102,7 +102,7 @@ def messaging():
             font=("Segoe UI", 20)
         )
     messageentry.grid(row=0, column=0, padx=10, pady=5, sticky="nsew")
-    messageentry.bind("<Return>", lambda e: send_message(messageentry.get().strip()))
+    messageentry.bind("<Return>", lambda e:(send_message(messageentry.get().strip()),messageentry.delete(0, "end"),messageentry.focus()))
     send_btn = ctk.CTkButton(
             master=input_frame,
             image=send_icon,
