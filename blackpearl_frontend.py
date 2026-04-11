@@ -1,11 +1,13 @@
 import customtkinter as ctk
 from blackpearl_backend import (
-    initialize_backend_token,initialize_backend_pass, send_message, set_user_status,
-    active_users, get_active_users, msg_queue,assignusercolour,usrcolor,token,Password
+    initialize_backend_token, send_message, 
+     msg_queue,assignusercolour,usrcolor,current_username
 )
 from PIL import Image
 import datetime
 
+
+active_users = []
 
 send_icon = None
 pearl_image = None
@@ -26,14 +28,39 @@ tabview.pack(padx=20, pady=10)
 tabview.add("Chat Room")
 tabview.add("Active Users")
 
-custom_font = ("Segoe UI", 30, 'bold')  # Increased font size
+custom_font = ("Segoe UI", 30, 'bold') 
 tabview._segmented_button.configure(font=("Segoe UI", 24, 'bold'))
 
 
 usr_frame = ctk.CTkFrame(master=tabview.tab("Active Users"), width=1672, height=650, fg_color="#383838", corner_radius=10)
 usr_frame.pack(padx=10, pady=(5, 5), side="top", anchor="n")
+usr_frame.pack_propagate(False)
 
-
+def update_active_users():
+    for widget in usr_frame.winfo_children():
+        widget.destroy()
+    label = ctk.CTkLabel(
+            master=usr_frame,
+            text=f"Active:",
+            font=custom_font,
+            fg_color="gray",
+            corner_radius=10,
+            text_color= "white"
+        )
+    label.pack(pady=10, padx=10, anchor="w")
+    for user in list(set(active_users)):
+        
+        user_label = ctk.CTkLabel(
+            master=usr_frame,
+            text=f"{user}",
+            font=("Segoe UI", 25, 'bold'),
+            fg_color="gray",
+            corner_radius=10,
+            text_color= usrcolor[user]
+        )
+        user_label.pack(pady=5, padx=10, anchor="w")
+    window.after(1000, update_active_users) 
+update_active_users()
 
 send_icon = ctk.CTkImage(
     light_image=Image.open(r"icons\send.png"),
@@ -49,6 +76,7 @@ join_image = ctk.CTkImage(
     light_image=Image.open(r"icons\wjoin.png"),
     dark_image=Image.open(r"icons\wjoin.png"),
     size=(60, 60))
+
 def messaging():
     global chat_text,msg_frame,messageentry,chat_frame, input_frame
     for widget in tabview.tab("Chat Room").winfo_children():
@@ -88,6 +116,7 @@ def messaging():
       msgs= msgeee.get('text', '')
       usr = msgeee.get('user', 'Unknown')
       assignusercolour(usr)
+      active_users.append(usr)
       usrlabel = ctk.CTkLabel(
         master=msg_frame,
         text=f"{usr} (You) {datetime.datetime.now().strftime('%H:%M:%S')}:",
@@ -137,9 +166,10 @@ def accept_messages():
            messg = msg.get('text', '')
            sndr = msg.get('user', 'Unknown')
            assignusercolour(sndr)
+           active_users.append(sndr)
            sndrlabel = ctk.CTkLabel(
               master=msg_frame,
-              text=f"{sndr} (You) {datetime.datetime.now().strftime('%H:%M:%S')}:",
+              text=f"{sndr} (You) {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}:",
               font=("Segoe UI", 16, 'bold'),
               fg_color="gray",
               corner_radius=10,
@@ -155,6 +185,7 @@ def accept_messages():
            sndrlabel.pack( anchor="w", padx=10)
            chat_text.pack( anchor="w", padx=10)
            chat_frame.update_idletasks()
+           
            chat_frame._parent_canvas.yview_moveto(1.0)        
         window.after(100, accept_messages)
     
@@ -162,9 +193,7 @@ def accept_messages():
 def user_initialize():
     global authorized_uuid, send_icon
 
-    for widget in tabview.tab("Chat Room").winfo_children():
-        widget.destroy()
-
+    
     join_page = ctk.frame = ctk.CTkFrame(master=tabview.tab("Chat Room"), width=widthh-200, height=heightt-200, fg_color="#383838", corner_radius=10)
     join_page.pack(padx=10, pady=(5, 5),  anchor="center")
     join_page.pack_propagate(False)
@@ -185,74 +214,24 @@ def user_initialize():
         width=300
     )
     authorized_uuid.pack(pady=10)
-    password_entry = ctk.CTkEntry(
-        master=join_page,
-        placeholder_text_color="grey",text_color="white",
-        placeholder_text="Password",
-        font=("Segoe UI", 20),
-        show="*",
-        width=300
-    )
-    def toggle_password_visibility():
-        if password_entry.cget("show") == "*":
-         password_entry.configure(show="")
-        else:
-          password_entry.configure(show="*")
-         
-    password_entry.pack(pady=10)
-    
-    show_pass = ctk.CTkCheckBox(
-        master=join_page,
-        text="Show Password",
-        command=toggle_password_visibility
-    )
-    show_pass.pack(pady=10)
+   
     
         
     def submit_user():
         global current_username
-        current_username = authorized_uuid.get()
-        password = password_entry.get()
-        if current_username in Password:
-            if Password[current_username]["password"] == password:
-               initialize_backend_pass(current_username)
-               messaging()
-               for widget in tabview.tab("Chat Room").winfo_children():
-                 widget.destroy()
-               
-            else:
-                error_label = ctk.CTkLabel(
-                    master=join_page,
-                    text="Wrong password! Try again. Or register with a new username.",
-                    font=("Segoe UI", 16),
-                    text_color="red"
-                )
-                error_label.pack(pady=10)   
-        else:
-            
-            token = initialize_backend_token(current_username)
-            Password[current_username] = {"password":password, "token": token}
-            print(Password)
-            for widget in tabview.tab("Chat Room").winfo_children():
-                widget.destroy()
-            
-                    
-
-          
-            
-            messaging()
+        current_username = authorized_uuid.get()  
+        initialize_backend_token(current_username)
+        for widget in tabview.tab("Chat Room").winfo_children():
+            widget.destroy()
+        messaging()
 
     # Submit button
     submit_btn = ctk.CTkButton(
         master=join_page,
         text="",
-        #text ="Sail Away!",
         image=join_image,
         width=300,
         height=70,
-        #font=("Segoe UI", 15, 'bold'),
-         
-        
         command=submit_user
     )
     submit_btn.image = join_image

@@ -1,18 +1,12 @@
-
-
-
 from pubnub.pnconfiguration import PNConfiguration
 from pubnub.pubnub import PubNub
 from pubnub.callbacks import SubscribeCallback
 import key
 from pubnub.models.consumer.v3.channel import Channel
-from pubnub.models.consumer.v3.group import Group
-from pubnub.models.consumer.v3.uuid import UUID
 from queue import Queue
 import hashlib
 
 token = None
-active_users = []
 msg_queue = Queue()
 CHANNEL = "blackpearl"
 usrcolor = {}
@@ -28,7 +22,7 @@ def assignusercolour(current_username):
 def initialize_backend_pass(authorized_uuid: str): 
     global pnconfig, pubnub, current_username
     current_username = authorized_uuid.strip()
-    active_users.append(current_username)
+    
     pnconfig = PNConfiguration()
     pnconfig.publish_key = key.publish
     pnconfig.subscribe_key = key.subscribe
@@ -46,9 +40,6 @@ def initialize_backend_pass(authorized_uuid: str):
     class MySubscribeCallback(SubscribeCallback):
         def message(self, pubnub, message):
             data = message.message
-            '''user = data.get('user')
-            if user == current_username:
-                return'''
             msg_queue.put(data)
 
         
@@ -59,7 +50,7 @@ def initialize_backend_pass(authorized_uuid: str):
 def initialize_backend_token(authorized_uuid: str):
     global pnconfig, pubnub, current_username
     current_username = authorized_uuid.strip()
-    active_users.append(current_username)
+    
     pnconfig = PNConfiguration()
     pnconfig.publish_key = key.publish
     pnconfig.subscribe_key = key.subscribe
@@ -83,9 +74,6 @@ def initialize_backend_token(authorized_uuid: str):
     class MySubscribeCallback(SubscribeCallback):
         def message(self, pubnub, message):
             data = message.message
-            '''user = data.get('user')
-            if user == current_username:
-                return'''
             msg_queue.put(data)
 
         
@@ -103,28 +91,5 @@ def send_message(msg: str):
         }).sync()
 
 
-def set_user_status(status: str):
-    if pubnub:
-        pubnub.set_state().channels(CHANNEL).state({"status": status}).sync()
-        if current_username in active_users:
-            active_users[current_username]["status"] = status
 
 
-def get_active_users():
-    try:
-        envelope = pubnub.here_now() \
-            .channels(CHANNEL) \
-            .include_uuids(True) \
-            .include_state(True) \
-            .sync()
-
-        result = envelope.result
-        if CHANNEL in result.channels:
-            for occupant in result.channels[CHANNEL].occupants:
-                u = occupant.uuid
-                st = occupant.state or {}
-                active_users[u] = {"status": st.get("status", "online")}
-        print(f"📡 here_now returned {len(active_users)} users → {list(active_users.keys())}")
-    except Exception as e:
-        print(f"⚠️ here_now error: {e}")
-    return active_users
