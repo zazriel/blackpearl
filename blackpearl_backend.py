@@ -11,23 +11,55 @@ from pubnub.models.consumer.v3.uuid import UUID
 from queue import Queue
 import hashlib
 
-
-active_users = {}
+token = None
+active_users = []
 msg_queue = Queue()
 CHANNEL = "blackpearl"
 usrcolor = {}
 pnconfig = None
 pubnub = None
 current_username = None
+Password = {}
 
 def assignusercolour(current_username):
  colours = hashlib.md5(current_username.encode()).hexdigest()[:6]
  usrcolor[current_username] = f"#{colours}"
- 
-def initialize_backend(authorized_uuid: str):
+
+def initialize_backend_pass(authorized_uuid: str): 
     global pnconfig, pubnub, current_username
     current_username = authorized_uuid.strip()
+    active_users.append(current_username)
+    pnconfig = PNConfiguration()
+    pnconfig.publish_key = key.publish
+    pnconfig.subscribe_key = key.subscribe
+    pnconfig.secret_key = key.secret
+    pnconfig.uuid = current_username
 
+    pubnub = PubNub(pnconfig)
+
+    
+    
+    
+    token  = Password[current_username]["token"].strip()
+    pubnub.set_token(token)
+
+    class MySubscribeCallback(SubscribeCallback):
+        def message(self, pubnub, message):
+            data = message.message
+            '''user = data.get('user')
+            if user == current_username:
+                return'''
+            msg_queue.put(data)
+
+        
+
+    pubnub.add_listener(MySubscribeCallback())
+    pubnub.subscribe().channels(CHANNEL).with_presence().execute()
+ 
+def initialize_backend_token(authorized_uuid: str):
+    global pnconfig, pubnub, current_username
+    current_username = authorized_uuid.strip()
+    active_users.append(current_username)
     pnconfig = PNConfiguration()
     pnconfig.publish_key = key.publish
     pnconfig.subscribe_key = key.subscribe
@@ -43,8 +75,10 @@ def initialize_backend(authorized_uuid: str):
         .channels(channels) \
         .ttl(15) \
         .sync()
-
-    pubnub.set_token(envelope.result.token.strip())
+    
+    
+    token  = envelope.result.token.strip()
+    pubnub.set_token(token)
 
     class MySubscribeCallback(SubscribeCallback):
         def message(self, pubnub, message):
@@ -54,23 +88,11 @@ def initialize_backend(authorized_uuid: str):
                 return'''
             msg_queue.put(data)
 
-        def presence(self, pubnub, presence):
-            user = presence.uuid
-            event = presence.event
-            print(f"🔥 PRESENCE EVENT: {user} → {event}")
-
-            if event == "join":
-                active_users[user] = {"status": "online"}
-            elif event in ["leave", "timeout"]:
-                active_users.pop(user, None)
-            elif event == "state-change" and presence.state:
-                active_users[user] = {"status": presence.state.get("status", "online")}
-
-            print(f"📋 Active users: {list(active_users.keys())}")
+        
 
     pubnub.add_listener(MySubscribeCallback())
     pubnub.subscribe().channels(CHANNEL).with_presence().execute()
-
+    return token
     
 
 def send_message(msg: str):
