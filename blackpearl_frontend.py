@@ -43,7 +43,7 @@ def update_active_users():
             master=usr_frame,
             text=f"Active:",
             font=custom_font,
-            fg_color="gray",
+            fg_color="transparent",
             corner_radius=10,
             text_color= "white"
         )
@@ -54,7 +54,7 @@ def update_active_users():
             master=usr_frame,
             text=f"{user}",
             font=("Segoe UI", 25, 'bold'),
-            fg_color="gray",
+            fg_color="dark gray",
             corner_radius=10,
             text_color= usrcolor[user]
         )
@@ -132,8 +132,8 @@ def messaging():
         corner_radius=10,
         fg_color= "gray"
      )
-      usrlabel.pack( anchor="w", padx=10)
-      chat_text.pack( anchor="w", padx=10)
+      usrlabel.pack( anchor="e", padx=10)
+      chat_text.pack( anchor="e", padx=10)
       chat_frame.update_idletasks()
       chat_frame._parent_canvas.yview_moveto(1.0)
       messageentry.delete(0, "end")
