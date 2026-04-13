@@ -121,7 +121,7 @@ def messaging():
         master=msg_frame,
         text=f"{usr} (You) {datetime.datetime.now().strftime('%H:%M:%S')}:",
         font=("Segoe UI", 16, 'bold'),
-        fg_color="gray",
+        fg_color="transparent",
         corner_radius=10,
         text_color= usrcolor[current_username]
      )            
@@ -171,7 +171,7 @@ def accept_messages():
               master=msg_frame,
               text=f"{sndr} (You) {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}:",
               font=("Segoe UI", 16, 'bold'),
-              fg_color="gray",
+              fg_color="transparent",
               corner_radius=10,
               text_color= usrcolor[sndr])
            
