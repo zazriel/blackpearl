@@ -213,9 +213,7 @@ def user_initialize():
         font=("Segoe UI", 20),
         width=300
     )
-    authorized_uuid.pack(pady=10)
-   
-    
+    authorized_uuid.pack(pady=10)     
         
     def submit_user():
         global current_username
@@ -223,6 +221,7 @@ def user_initialize():
         initialize_backend_token(current_username)
         for widget in tabview.tab("Chat Room").winfo_children():
             widget.destroy()
+        send_message(f"{current_username} has joined the crew!")         
         messaging()
 
     # Submit button
