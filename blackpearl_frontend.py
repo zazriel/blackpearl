@@ -314,7 +314,7 @@ def set_user(username, password, filename="users.json"):
       username1 = username
       hash1 = hashed
       
-      insider_info(username1,hash1.encode('utf-8'))  
+      insider_info(username1,hash1)  
       initialize_backend_token(username)  
       send_message(f"{username} has joined the crew!")
       for widget in tabview.tab("Chat Room").winfo_children():
