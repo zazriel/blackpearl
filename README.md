@@ -1,127 +1,136 @@
-# 💬 Python Real-Time Chatroom
+# 🏴‍☠️ Black Pearl --- Real-Time Pirate Chat
 
-A sleek, modern desktop chat application built with **Python**, powered by **PubNub's** global real-time network and styled with the **CustomTkinter** widget library. This project focuses on secure, real-time communication with a scalable architecture and a clean user experience.
+![Black Pearl](icons/blackpearllogo.png)
 
----
+A shadowed vessel drifting across the digital seas --- **Black Pearl**
+is a real-time, token-secured chat system forged in Python. Built for
+speed, secrecy, and control, it channels communication through a secure,
+scalable network while maintaining a dark, minimal interface.
 
-## 🚀 Overview
+------------------------------------------------------------------------
 
-This application is a **private, token-secured chatroom** that enables users to communicate instantly across multiple clients. It uses PubNub’s **Publish/Subscribe model** along with **Access Manager (PAM v3)** to ensure only authorized users can access the system.
+## ⚓ Overview
 
-The current implementation delivers a solid real-time messaging foundation, with a roadmap for advanced features and system enhancements.
+**Black Pearl** is a **private communication channel** designed for
+controlled access and real-time interaction. Each user is issued a
+unique identity and token, ensuring only trusted entities may board the
+ship.
 
----
+Powered by PubNub's infrastructure and secured via **Access Manager (PAM
+v3)**, the system enforces strict access boundaries while maintaining
+low-latency message delivery across clients.
 
-## ✨ Features
+------------------------------------------------------------------------
 
-* 🔑 **Token-Based Authentication (PAM v3)**
-  Secure access using dynamically generated tokens tied to specific users.
+## 🗝️ Core Capabilities
 
-* 💬 **Real-Time Messaging**
-  Instant delivery and reception of messages using PubNub’s infrastructure.
+-   🔑 **Token-Gated Access** Entry is restricted. Each user operates
+    under a dynamically issued token bound to their identity.
 
-* 🖥️ **Modern UI**
-  Clean, contemporary interface with dark/light mode support via `CustomTkinter`.
+-   💬 **Live Message Flow** Messages travel instantly across the
+    network---no delay, no drift.
 
-* 👤 **User Identification**
-  Each user is uniquely identified using a `uuid`.
+-   🖤 **Dark Interface** A minimal, modern UI styled with
+    `CustomTkinter`, aligned with the Black Pearl aesthetic.
 
-* 🔄 **Auto-Scrolling Chat**
-  Chat window automatically updates to display the latest messages.
+-   🧭 **Unique Identity (UUID)** Every participant is distinctly
+    tracked within the system.
 
-* 🌍 **Multi-Client Support**
-  Scalable backend allows multiple users to communicate globally.
+-   🌊 **Seamless Chat Stream** Automatic scrolling ensures no message
+    is lost to the depths.
 
-* 🟢 **User Presence **
-  Ability to track online/offline users in the chatroom.
+-   🏴‍☠️ **Multi-Client Network** Multiple users can connect and
+    communicate across regions in real time.
 
----
+-   🟢 **Presence Tracking** Know who's aboard... and who's vanished
+    into the void.
 
-## 🛠️ Built With
+------------------------------------------------------------------------
 
-* **Python 3.x** – Core programming language
-* **PubNub Python SDK** – Real-time messaging infrastructure
-* **CustomTkinter** – Modern UI components and theming
+## 🛠️ Tech Stack
 
----
+-   **Python 3.x**
+-   **PubNub Python SDK**
+-   **CustomTkinter**
 
-## ⚙️ How It Works
+------------------------------------------------------------------------
 
-1. A secure token is generated using a backend script .
-2. The token is bound to a specific `uuid`.
-3. The client application uses this token to:
+## ⚙️ System Flow
 
-   * Subscribe to a chat channel
-   * Publish messages
-4. PubNub enforces access control using PAM, ensuring only authorized users can interact.
+1.  A secure token is forged via backend logic\
+2.  The token is bound to a user's `uuid`\
+3.  The client uses this token to:
+    -   Subscribe to a shared channel\
+    -   Publish messages\
+4.  PubNub enforces access control at every step
 
----
+------------------------------------------------------------------------
 
-## 🚀 Getting Started
+## 🚀 Deployment
 
-### 📌 Prerequisites
+### 📌 Requirements
 
-1. **PubNub Keys**
-   Get your `Publish Key` and `Subscribe Key` from the [PubNub Admin Portal](https://admin.pubnub.com/).
+-   PubNub `Publish Key` & `Subscribe Key`
+-   Python 3.8+
 
-2. **Python**
-   Ensure Python 3.8+ is installed.
+------------------------------------------------------------------------
 
----
+### 📦 Setup
 
-### 📦 Installation
-
-```bash
+``` bash
 git clone https://github.com/zazriel/blackpearl.git
 cd blackpearl
 pip install -r requirements.txt
 ```
 
----
+------------------------------------------------------------------------
 
-### ▶️ Run the Chat Client
+### ▶️ Launch
 
-```bash
+``` bash
 python blackpearl_frontend.py
 ```
 
-* Enter the `username`&`passwaord`
+Enter your **username** and **password** to gain access.
 
----
+------------------------------------------------------------------------
 
-## ⚠️ Important Notes
+## ⚠️ Security Notes
 
-* 🔒 Keep your PubNub keys and secret key secure.
+-   Your keys are your lifeline --- do not expose them\
+-   Tokens are ephemeral by design; treat them as such
 
----
+------------------------------------------------------------------------
 
-## 🧠 Future Enhancements
+## 🧠 Roadmap
 
-This project is actively evolving. Planned features include:
+Planned evolutions of the vessel:
 
-* ⌨️ Typing indicators
-* 📜 Message history & persistence
-* 🔒 End-to-end encryption
-* 📨 Private/direct messaging
-* 📁 File and media sharing
-* 🎨 Advanced UI/UX improvements
+-   ⌨️ Typing indicators\
+-   📜 Message persistence\
+-   🔒 End-to-end encryption\
+-   📨 Direct/private channels\
+-   📁 File transfer\
+-   🎨 UI refinement
 
----
+------------------------------------------------------------------------
 
-## 🤝 Contributing
+## ⚔️ Contribution
 
-This is currently a private project, but ideas, feedback, and collaboration are welcome for future development.
+The project remains under controlled development. External input is
+welcome---but access is earned, not given.
 
----
+------------------------------------------------------------------------
 
 ## 📄 License
 
-This project is private and not licensed for public distribution at this time.
+This project is private. Unauthorized distribution is prohibited.
 
----
+------------------------------------------------------------------------
 
-## 💡 Inspiration
+## 🌑 Closing Note
 
-Built as a practical exploration of **real-time systems**, **secure messaging**, and **modern Python GUI development**.
+Not every system needs noise.\
+Not every network needs exposure.
 
----
+**Black Pearl sails quiet.**
