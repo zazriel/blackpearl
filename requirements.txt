@@ -1,2 +1,4 @@
 pubnub
 customtkinter
+pillow
+bcrypt
