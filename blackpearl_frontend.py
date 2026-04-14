@@ -239,7 +239,9 @@ def recievesecrets(text,filename="users.json"):
          json.dump(data, file, indent=4)
 def user_initialize():
     global authorized_uuid, send_icon, join_page,password_entry
-
+    data = {}
+    with open("users.json", "w") as file:
+      json.dump(data, file, indent=4)
     
     join_page = ctk.frame = ctk.CTkFrame(master=tabview.tab("Chat Room"), width=widthh-200, height=heightt-200, fg_color="#383838", corner_radius=10)
     join_page.pack(padx=10, pady=(5, 5),  anchor="center")
