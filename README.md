@@ -33,7 +33,7 @@ low-latency message delivery across clients.
 -   🖤 **Dark Interface** A minimal, modern UI styled with
     `CustomTkinter`, aligned with the Black Pearl aesthetic.
 
--   🧭 **Unique Identity ** Every participant is distinctly
+-   🧭 **Unique Identity** Every participant is distinctly
     tracked within the system.
 
 -   🌊 **Seamless Chat Stream** Automatic scrolling ensures no message
