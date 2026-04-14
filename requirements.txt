@@ -1,4 +1,0 @@
-pubnub
-customtkinter
-pillow
-bcrypt
