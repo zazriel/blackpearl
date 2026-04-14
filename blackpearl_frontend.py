@@ -60,12 +60,17 @@ def update_active_users():
             corner_radius=10,
             text_color= usrcolor[user]
         )
-        user_label.pack(pady=5, padx=10, anchor="w")
-        
-    active_users.clear()    
-    window.after(5000, update_active_users) 
+        user_label.pack(pady=5, padx=10, anchor="w")    
+    window.after(1000, update_active_users) 
+    
+def clear_active_users():
+    active_users.clear()
+    window.after(60000, clear_active_users)
+    
 update_active_users()
+clear_active_users()
 
+    
 send_icon = ctk.CTkImage(
     light_image=Image.open(r"icons\send.png"),
     dark_image=Image.open(r"icons\send.png"),
@@ -92,6 +97,7 @@ def scroll_to_bottom():
 
     except:
         pass
+    
 def messaging():
     global chat_text,msg_frame,messageentry,chat_frame, input_frame
     
@@ -232,7 +238,7 @@ def recievesecrets(text,filename="users.json"):
      with open(filename, "w") as file:
          json.dump(data, file, indent=4)
 def user_initialize():
-    global authorized_uuid, send_icon, join_page
+    global authorized_uuid, send_icon, join_page,password_entry
 
     
     join_page = ctk.frame = ctk.CTkFrame(master=tabview.tab("Chat Room"), width=widthh-200, height=heightt-200, fg_color="#383838", corner_radius=10)
@@ -347,8 +353,10 @@ def login_user(username, password, filename="users.json"):
          
         
     else:
-        incorrect= ctk.CTkLabel(join_page, text="Incorrect password! Try again. Or username already taken.", text_color="red", font=("Segoe UI", 15))
-        incorrect.pack(pady=5)
+        password_entry.delete(0,"end")
+        password_entry.focus()
+        password_entry.configure(border_color="red")
+        
 user_initialize()
 
     
