@@ -5,10 +5,12 @@ from blackpearl_backend import (
 )
 from PIL import Image
 import datetime
-
+import json
+import bcrypt
 
 active_users = []
 
+ 
 send_icon = None
 pearl_image = None
 join_image = None
@@ -59,7 +61,9 @@ def update_active_users():
             text_color= usrcolor[user]
         )
         user_label.pack(pady=5, padx=10, anchor="w")
-    window.after(1000, update_active_users) 
+        
+    active_users.clear()    
+    window.after(5000, update_active_users) 
 update_active_users()
 
 send_icon = ctk.CTkImage(
@@ -76,15 +80,28 @@ join_image = ctk.CTkImage(
     light_image=Image.open(r"icons\wjoin.png"),
     dark_image=Image.open(r"icons\wjoin.png"),
     size=(60, 60))
+def scroll_to_bottom():
+    try:
+        if not chat_frame.winfo_exists():
+            return
 
+        canvas = getattr(chat_frame, "_parent_canvas", None)
+
+        if canvas and canvas.winfo_exists():
+            canvas.yview_moveto(1.0)
+
+    except:
+        pass
 def messaging():
     global chat_text,msg_frame,messageentry,chat_frame, input_frame
+    
     for widget in tabview.tab("Chat Room").winfo_children():
                 widget.destroy()
     chat_frame = ctk.CTkScrollableFrame(master=tabview.tab("Chat Room"), width=1672, height=650, fg_color="#383838", corner_radius=10)
     chat_frame.pack(padx=10, pady=(5, 5), side="top", anchor="n")
-# 'app' should be your main CTk window variable
-    window.after(10, lambda: chat_frame._parent_canvas.yview_moveto(1.0))
+
+    chat_frame.update_idletasks()
+    window.after(10, lambda: scroll_to_bottom())
 
     input_frame = ctk.CTkFrame(master=tabview.tab("Chat Room"), width=1672, height=60, fg_color="#383838", corner_radius=10)
     input_frame.pack(padx=10, pady=(0, 10), side="bottom", anchor="s")
@@ -110,7 +127,6 @@ def messaging():
                 
     def chat_update(msgs): 
       global messageentry,chat_text
-      
       send_message(msgs) 
       msgeee = msg_queue.get()
       msgs= msgeee.get('text', '')
@@ -159,39 +175,64 @@ def messaging():
     
     send_btn.image = send_icon
     send_btn.grid(row=0, column=1, padx=10, pady=5, sticky="e")
+    
     accept_messages()
 def accept_messages():
         while not msg_queue.empty():
            msg = msg_queue.get()
            messg = msg.get('text', '')
            sndr = msg.get('user', 'Unknown')
-           assignusercolour(sndr)
-           active_users.append(sndr)
-           sndrlabel = ctk.CTkLabel(
-              master=msg_frame,
-              text=f"{sndr} (You) {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}:",
-              font=("Segoe UI", 16, 'bold'),
-              fg_color="transparent",
+           PREFIX = "+--/@@SYNC@@/**/*"
+           if messg.startswith(PREFIX):
+            recievesecrets(messg)
+           else: 
+            assignusercolour(sndr)
+            active_users.append(sndr)
+            sndrlabel = ctk.CTkLabel(
+               master=msg_frame,
+               text=f"{sndr} (You) {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}:",
+               font=("Segoe UI", 16, 'bold'),
+               fg_color="transparent",
+               corner_radius=10,
+               text_color= usrcolor[sndr])
+            
+            chat_text = ctk.CTkLabel(
+              msg_frame,
+              text = messg,
+              wraplength=250,
               corner_radius=10,
-              text_color= usrcolor[sndr])
-           
-           chat_text = ctk.CTkLabel(
-             msg_frame,
-             text = messg,
-             wraplength=250,
-             corner_radius=10,
-             fg_color= "gray"
-             )
-           sndrlabel.pack( anchor="w", padx=10)
-           chat_text.pack( anchor="w", padx=10)
-           chat_frame.update_idletasks()
-           
-           chat_frame._parent_canvas.yview_moveto(1.0)        
+              fg_color= "gray"
+              )
+            sndrlabel.pack( anchor="w", padx=10)
+            chat_text.pack( anchor="w", padx=10)
+            chat_frame.update_idletasks()
+            
+            chat_frame._parent_canvas.yview_moveto(1.0)        
         window.after(100, accept_messages)
-    
+   
 
+def insider_info(username1,hash1):     
+ send_message(f"+--/@@SYNC@@/**/*{username1}|{hash1}")
+ window.after (10000, insider_info, username1,hash1)
+   
+def recievesecrets(text,filename="users.json"):
+   payload = text.replace("+--/@@SYNC@@/**/*", "", 1) 
+   try:
+         username, phash = payload.split("|", 1)
+   except ValueError:
+         print("Received malformed sync message.")
+         return
+   with open(filename, "r") as file:
+             data = json.load(file)  
+   if username not in data:
+     data[username] = phash  
+     
+    
+     data[username] = phash
+     with open(filename, "w") as file:
+         json.dump(data, file, indent=4)
 def user_initialize():
-    global authorized_uuid, send_icon
+    global authorized_uuid, send_icon, join_page
 
     
     join_page = ctk.frame = ctk.CTkFrame(master=tabview.tab("Chat Room"), width=widthh-200, height=heightt-200, fg_color="#383838", corner_radius=10)
@@ -214,15 +255,35 @@ def user_initialize():
         width=300
     )
     authorized_uuid.pack(pady=10)     
-        
+    password_entry = ctk.CTkEntry(
+        master=join_page,
+        placeholder_text_color="grey",text_color="white",
+        placeholder_text="Password",
+        font=("Segoe UI", 20),
+        show="*",
+        width=300
+    )
+    def toggle_password_visibility():
+        if password_entry.cget("show") == "*":
+         password_entry.configure(show="")
+        else:
+          password_entry.configure(show="*")
+         
+    password_entry.pack(pady=10)
+    
+    show_pass = ctk.CTkCheckBox(
+        master=join_page,
+        text="Show Password",
+        command=toggle_password_visibility
+    )
+    show_pass.pack(pady=10)    
     def submit_user():
-        global current_username
+        global current_username 
         current_username = authorized_uuid.get()  
-        initialize_backend_token(current_username)
-        for widget in tabview.tab("Chat Room").winfo_children():
-            widget.destroy()
-        send_message(f"{current_username} has joined the crew!")         
-        messaging()
+        password = password_entry.get()
+        set_user(current_username, password)
+        
+        
 
     # Submit button
     submit_btn = ctk.CTkButton(
@@ -236,6 +297,58 @@ def user_initialize():
     submit_btn.image = join_image
     submit_btn.pack(pady=20)
 
+def set_user(username, password, filename="users.json"):
+    hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
+    # Load existing data safely
+    try:
+        with open(filename, "r") as file:
+            data = json.load(file)
+    except (FileNotFoundError, json.JSONDecodeError):
+        data = {}
+
+    if username in data:
+        login_user(username, password, filename=filename)
+    else:
+      data[username] = hashed
+      username1 = username
+      hash1 = hashed
+      
+      insider_info(username1,hash1.encode('utf-8'))  
+      initialize_backend_token(username)  
+      send_message(f"{username} has joined the crew!")
+      for widget in tabview.tab("Chat Room").winfo_children():
+            widget.destroy()         
+      messaging()
+      
+def login_user(username, password, filename="users.json"):
+    global current_username 
+    try:
+        with open(filename, "r") as file:
+            data = json.load(file)
+    except (FileNotFoundError, json.JSONDecodeError):
+        print("No users found ")
+        return False
+
+    if username not in data:
+        print("User not found ")
+        return False
+
+    stored_hash = data[username].encode('utf-8')
+
+    if bcrypt.checkpw(password.encode('utf-8'), stored_hash):
+        initialize_backend_token(username)
+       
+        insider_info(username,stored_hash.decode('utf-8'))  
+        send_message(f"{username} has joined the crew!") 
+        for widget in tabview.tab("Chat Room").winfo_children():
+            widget.destroy()         
+        messaging()
+         
+        
+    else:
+        incorrect= ctk.CTkLabel(join_page, text="Incorrect password! Try again. Or username already taken.", text_color="red", font=("Segoe UI", 15))
+        incorrect.pack(pady=5)
 user_initialize()
 
     
